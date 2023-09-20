@@ -90,20 +90,13 @@ void _handle_command(char *command, char **env)
 	int status;
 
 	status = EXIT_SUCCESS;
-
 	/* Split the arguments into separate strings */
 	args = strsplit(command, ' ', &no_of_args);
-
 	if (args == NULL)
 	{
 		printf("Memory allocation error\n");
 		exit(EXIT_FAILURE);
 	}
-
-	/*for (i = 0; i < no_of_args; i++) {
-        printf("args[%lu]: \"%s\"\n", i, args[i]);
-    }*/
-
 	if (_strcmp("exit", args[0]) == 0)
 	{
 		status = _atoi(args[1]);
@@ -113,7 +106,6 @@ void _handle_command(char *command, char **env)
 	{
 		_handle_builtin_command(args[0]);
 	}
-
 	if (!_handle_file_status(&statbuffer, args[0]))
 	{
 		char *fullpath;

@@ -106,3 +106,59 @@ char *_extract_substring(char *str, int start, int end)
 	temp[index] = '\0';
 	return (temp);
 }
+
+
+
+
+
+void _extract_substrings(char *str, char separator, char **matrix)
+{
+	int word_index = 0;
+	bool in_word = false;
+	char *start = str;
+	char *ptr;
+	int i;
+
+	for (ptr = str; *ptr != '\0'; ptr++)
+	{
+		if (*ptr == separator)
+		{
+			if (in_word)
+			{
+				int length = ptr - start;
+
+				matrix[word_index] = _extract_substring(str, start - str,
+						(int)(start - str + length));
+				if (matrix[word_index] == NULL)
+				{
+					for (i = 0; i < word_index; i++)
+						free(matrix[i]);
+					free(matrix);
+					return;
+				}
+				word_index++;
+				in_word = false;
+			}
+		}
+		else
+		{
+			if (!in_word)
+				start = ptr;
+			in_word = true;
+		}
+	}
+	if (in_word)
+	{
+		int length = ptr - start;
+
+		matrix[word_index] = _extract_substring(str, start - str,
+				(int)(start - str + length));
+		if (matrix[word_index] == NULL)
+		{
+			for (i = 0; i <= word_index; i++)
+				free(matrix[i]);
+			free(matrix);
+			return;
+		}
+	}
+}

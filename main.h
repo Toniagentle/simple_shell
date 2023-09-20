@@ -35,4 +35,11 @@ void _copy_strings(char *fullstring, int num_strings, va_list args);
 size_t _calculate_total_length(int num_strings, va_list args);
 int _atoi(char *s);
 char **strsplit(char *str, char separator, size_t *num_strings);
+size_t count_words(char *str, char separator);
+char **_allocate_memory_for_matrix(size_t size);
+void _extract_substrings(char *str, char separator, char **matrix);
+char *_extract_substring(char *str, int start, int end);
+char *_extract_word(char *str, int start, int end);
+void _cleanup_matrix(char **matrix, int num_words);
+bool _add_word_to_matrix(char **matrix, char *word, int word_index);
 #endif
