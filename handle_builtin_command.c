@@ -11,7 +11,8 @@ void _handle_builtin_command(char *command)
 	int i;
 
 	i = 0;
-	if (_strcmp("env", command) == 0)
+	if ((_strcmp("env", command) == 0) ||
+		(_strcmp("printenv", command) == 0))
 	{
 		while (environ[i] != NULL)
 		{

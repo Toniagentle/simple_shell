@@ -72,7 +72,7 @@ int main(int argc, char **env) {
 
 
 
-#include "shell.h"
+#include "main.h"
 
 /*
 *main - Entry Point
@@ -187,3 +187,72 @@ int main(int argc, char **env)
     free(buffer);
     return (0);
 }
+
+
+void _handle_command(char *command, char **env)
+{
+	struct stat statbuffer;
+	char **args;
+	size_t no_of_args;
+	int status;
+	char *fullpath;
+
+	status = EXIT_SUCCESS;
+	/* Split the arguments into separate strings */
+	args = strsplit(command, ' ', &no_of_args);
+	if (args == NULL)
+	{
+		printf("Memory allocation error\n");
+		exit(EXIT_FAILURE);
+	}
+	if (_strcmp("exit", args[0]) == 0)
+	{
+		if (args[1] !=NULL)
+			status = _atoi(args[1]);
+		_free_vector(args, no_of_args);
+		exit(status);
+	} else if ((_strcmp("env", args[0]) == 0) ||
+		(_strcmp("printenv", args[0]) == 0))
+	{
+		_handle_builtin_command(args[0]);
+	}
+	if (!_handle_file_status(&statbuffer, args[0]))
+	{
+		fullpath = _handle_file_in_path(args[0], &statbuffer);
+		if (fullpath)
+		{
+			args[0] = fullpath;
+		}
+		else
+		{
+			printf("Executable not found\n");
+			_free_vector(args, no_of_args);
+			return;
+		}
+	}
+	_execute_command(args, no_of_args, env);
+}
+
+
+
+/*if (_strcmp("exit", args[0]) == 0)
+	{
+		if (args[1] !=NULL)
+			status = _atoi(args[1]);
+		_free_vector(args, no_of_args);
+		exit(status);*/
+	/*if (_strcmp("exit", args[0]) == 0)
+    {
+         
+
+        if (args[1] != NULL)
+        {
+            status = _atoi(args[1]);
+        }
+        _free_vector(args, no_of_args);
+        exit(status);
+	} else if ((_strcmp("env", args[0]) == 0) ||
+		(_strcmp("printenv", args[0]) == 0))
+	{
+		_handle_builtin_command(args[0]);
+	}*/

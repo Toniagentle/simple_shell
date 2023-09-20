@@ -15,7 +15,7 @@ extern char **environ;
 
 /*Prototypes*/
 void _execute_command(char **args, size_t no_of_args, char **env);
-void _handle_command(char *command, char **env);
+int _handle_command(char *command, char **env);
 char *_str_concat(int num_strings, ...);
 void _handle_builtin_command(char *command);
 bool _handle_file_status(struct stat *statbuffer, char *pathname);
@@ -42,4 +42,6 @@ char *_extract_substring(char *str, int start, int end);
 char *_extract_word(char *str, int start, int end);
 void _cleanup_matrix(char **matrix, int num_words);
 bool _add_word_to_matrix(char **matrix, char *word, int word_index);
+void _handle_exit(char **exit_arguments, size_t no_of_args);
+bool _handle_buitin(char **args, size_t no_of_args);
 #endif

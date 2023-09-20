@@ -37,12 +37,15 @@ int main(int argc, char **env)
 		{
 			if (buffer[bytes_read - 1] == '\n')
 				buffer[bytes_read - 1] = '\0';
-
-			_handle_command(buffer, env);
+			if (_handle_command(buffer, env) != 0)
+			{
+				free(buffer);
+				exit(EXIT_FAILURE);
+			}
 		}
 	}
 	free(buffer);
-	return (0);
+	return (EXIT_SUCCESS);
 }
 
 /**
@@ -61,6 +64,7 @@ void _execute_command(char **args, size_t no_of_args, char **env)
 	{
 		_free_vector(args, no_of_args);
 		_panic("Error (fork)");
+		exit(EXIT_FAILURE);
 	}
 
 	if (pid == 0)
@@ -72,6 +76,7 @@ void _execute_command(char **args, size_t no_of_args, char **env)
 	{
 		_free_vector(args, no_of_args);
 		_panic("Error (wait)");
+		exit(EXIT_FAILURE);
 	}
 	_free_vector(args, no_of_args);
 }
@@ -82,14 +87,15 @@ void _execute_command(char **args, size_t no_of_args, char **env)
  * @env: The enviroment variable
  * Return: void
 */
-void _handle_command(char *command, char **env)
+int _handle_command(char *command, char **env)
 {
 	struct stat statbuffer;
 	char **args;
 	size_t no_of_args;
-	int status;
+	/*int status;*/
+	char *fullpath;
 
-	status = EXIT_SUCCESS;
+	/*status = EXIT_SUCCESS;*/
 	/* Split the arguments into separate strings */
 	args = strsplit(command, ' ', &no_of_args);
 	if (args == NULL)
@@ -97,20 +103,10 @@ void _handle_command(char *command, char **env)
 		printf("Memory allocation error\n");
 		exit(EXIT_FAILURE);
 	}
-	if (_strcmp("exit", args[0]) == 0)
-	{
-		if (args[1])
-			status = _atoi(args[1]);
-		_free_vector(args, no_of_args);
-		exit(status);
-	} else if (_strcmp("env", args[0]) == 0)
-	{
-		_handle_builtin_command(args[0]);
-	}
+	if (_handle_buitin(args, no_of_args))
+		return (0);
 	if (!_handle_file_status(&statbuffer, args[0]))
 	{
-		char *fullpath;
-
 		fullpath = _handle_file_in_path(args[0], &statbuffer);
 		if (fullpath)
 		{
@@ -120,8 +116,29 @@ void _handle_command(char *command, char **env)
 		{
 			printf("Executable not found\n");
 			_free_vector(args, no_of_args);
-			return;
+			return (EXIT_FAILURE);
 		}
 	}
 	_execute_command(args, no_of_args, env);
+	return (0);
+}
+
+/**
+ * _handle_buitin - Handles the buitin command
+ * @args: The command passed
+ * @no_of_args: number of command passed
+ * Return: True or false
+*/
+bool _handle_buitin(char **args, size_t no_of_args)
+{
+	if (_strcmp("exit", args[0]) == 0)
+	{
+		_handle_exit(args, no_of_args);
+	} else if ((_strcmp("env", args[0]) == 0) ||
+			(_strcmp("printenv", args[0]) == 0))
+	{
+		_handle_builtin_command(args[0]);
+		return (true);
+	}
+	return (false);
 }

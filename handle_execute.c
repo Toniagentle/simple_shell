@@ -14,4 +14,5 @@ void _handle_execute(char **arguments, int no_of_args, char **envp)
 	/*If execve fails*/
 	_free_vector(arguments, no_of_args);
 	_panic("Error (execv)");
+	exit(EXIT_FAILURE);
 }

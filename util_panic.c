@@ -9,5 +9,4 @@
 void _panic(char *string)
 {
 	perror(string);
-	exit(EXIT_FAILURE);
 }
