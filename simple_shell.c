@@ -99,7 +99,8 @@ void _handle_command(char *command, char **env)
 	}
 	if (_strcmp("exit", args[0]) == 0)
 	{
-		status = _atoi(args[1]);
+		if(args[1])
+			status = _atoi(args[1]);
 		_free_vector(args, no_of_args);
 		exit(status);
 	} else if (_strcmp("env", args[0]) == 0)
